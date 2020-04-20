@@ -130,7 +130,7 @@ def GetAnnualStatistics(DataDF):
     WYDataDF['site_no'] = annualData['site_no'].mean()
     WYDataDF['Mean Flow'] = annualData['Discharge'].mean()
     WYDataDF['Peak Flow'] = annualData['Discharge'].max()
-    WYDataDF['Median'] = annualData['Discharge'].median()
+    WYDataDF['Median Flow'] = annualData['Discharge'].median()
     WYDataDF['Coeff Var'] = ((annualData['Discharge'].std())/(annualData['Discharge'].mean()))*100
     WYDataDF['Skew'] = annualData.apply({'Discharge':lambda x: stats.skew(x,bias=False)})
     WYDataDF['Tqmean'] = annualData.apply({'Discharge': lambda x: CalcTqmean(x)})
