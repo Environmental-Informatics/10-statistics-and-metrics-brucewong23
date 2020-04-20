@@ -53,7 +53,7 @@ def ClipData( DataDF, startDate, endDate ):
     missing values."""
     # clip data-frame to desired period, since index is already datetime series,
     # simply using pd.loc to subset/clip
-    DataDF = DataDF.loc[startDate:endDate]
+    DataDF = DataDF[startDate:endDate]
     # report missing value counts
     MissingValues = DataDF["Discharge"].isna().sum()
     return( DataDF, MissingValues )
@@ -79,12 +79,16 @@ def CalcRBindex(Qvalues):
        values of day-to-day changes in daily discharge volumes
        (pathlength) by total discharge volumes for each year. The
        routine returns the RBindex value for the given data array."""
-    Qvalues = Qvalues.dropna() # remove NaN
-    Qchanges = Qvalues.diff() # default compare with previous element, from https://www.coursera.org/learn/python-data-analysis/lecture/31dEi/date-functionality
-    Qchanges = Qchanges.dropna() # remove NaN
-    Abschanges = abs(Qchanges) # obtain absoulte values
-    Totalchange = sum(Abschanges) # total changes
-    RBindex = Totalchange/Qvalues.sum() # total change/total discharge
+    total = 0 # accumulates day to day change
+    if len(Qvalues.dropna()) > 0:  # remove NaN if there's any 
+        Qvalues = Qvalues.dropna()
+        
+        for i in range(1, len(Qvalues.dropna())): 
+            total += abs(Qvalues.iloc[i-1] - Qvalues.iloc[i]) # abs value of day-to-day change  
+            total_discharge = sum(Qvalues.dropna())
+        RBindex = total / total_discharge # summed day-to-day changes divided by sum of flow 
+    else:
+        RBindex = np.nan
     return ( RBindex )
 
 def Calc7Q(Qvalues):
@@ -145,7 +149,7 @@ def GetMonthlyStatistics(DataDF):
     for the given streamflow time series.  Values are returned as a dataframe
     of monthly values for each year."""
     # resample and aggregate into monthly values
-    monthlyData = DataDF.resample('M')
+    monthlyData = DataDF.resample('MS')
     monthly = monthlyData.mean()
     # New DF column names
     colnames = ['site_no', 'Mean Flow', 'Coeff Var', 'Tqmean', 'R-B Index']
