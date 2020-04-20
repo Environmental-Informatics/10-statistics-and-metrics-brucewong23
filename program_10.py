@@ -121,7 +121,7 @@ def GetAnnualStatistics(DataDF):
     annual = annualData.mean()
     
     # New DF column names
-    colnames = ['site_no','Mean Flow', 'Peak Flow', 'Median', 'Coeff Var', 
+    colnames = ['site_no','Mean Flow', 'Peak Flow', 'Median Flow', 'Coeff Var', 
                 'Skew', 'Tqmean', 'R-B Index', '7Q', '3xMedian']
     # New annual DF
     WYDataDF=pd.DataFrame(index=annual.index, columns=colnames)
